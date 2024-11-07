@@ -4,6 +4,7 @@ import {
 	Button,
 	Input,
 	ScrollView,
+	Separator,
 	Text,
 	XStack,
 	YStack,
@@ -11,11 +12,22 @@ import {
 } from "tamagui";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useAuth } from "@/context/auth-context";
 
 export default function index() {
+	const { authenticate, isLoadingAuth } = useAuth();
+
 	const [email, setEmail] = React.useState("");
 	const [password, setPassword] = React.useState("");
-	const [authMode, setAuthMode] = React.useState("");
+	const [authMode, setAuthMode] = React.useState("login");
+
+	async function onAuthenticate() {
+		await authenticate(authMode, email, password);
+	}
+
+	const toggleAuthMode = () => {
+		setAuthMode(authMode === "login" ? "register" : "login");
+	};
 
 	return (
 		<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -45,6 +57,7 @@ export default function index() {
 								placeholder="Enter your details..."
 							/>
 						</YStack>
+
 						<YStack gap={5}>
 							<Text marginLeft={10}>Password</Text>
 							<Input
@@ -55,7 +68,22 @@ export default function index() {
 								placeholder="Password your details..."
 							/>
 						</YStack>
-						<Button themeInverse>Register</Button>
+
+						<Button themeInverse onPress={onAuthenticate}>
+							{authMode == "login" ? "Login" : "Register"}
+						</Button>
+
+						<XStack justifyContent="center">
+							<Separator maxWidth="90%" />
+						</XStack>
+
+						<XStack justifyContent="center">
+							<Text textDecorationLine="underline" fontWeight="bold">
+								{authMode == "login"
+									? "Register new account"
+									: "Login to account"}
+							</Text>
+						</XStack>
 					</YStack>
 				</YStack>
 			</ScrollView>
